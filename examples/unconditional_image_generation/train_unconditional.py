@@ -30,7 +30,7 @@ from diffusers.utils.import_utils import is_xformers_available
 
 
 # Will error if the minimal version of diffusers is not installed. Remove at your own risks.
-check_min_version("0.18.0.dev0")
+check_min_version("0.19.0.dev0")
 
 logger = get_logger(__name__, log_level="INFO")
 
@@ -560,7 +560,9 @@ def main(args):
 
             clean_images = batch["input"]
             # Sample noise that we'll add to the images
-            noise = torch.randn(clean_images.shape).to(clean_images.device)
+            noise = torch.randn(
+                clean_images.shape, dtype=(torch.float32 if args.mixed_precision == "no" else torch.float16)
+            ).to(clean_images.device)
             bsz = clean_images.shape[0]
             # Sample a random timestep for each image
             timesteps = torch.randint(
